@@ -1,0 +1,11 @@
+# https://github.com/curationexperts-deprecated/ansible-hydra/issues/84#issuecomment-166735936
+- name: pause for few seconds for other services to start
+  pause: seconds=15
+
+- name: install whisper dependencies
+  apt:
+    pkg:
+     - ffmpeg
+    update_cache: true
+  become: yes
+

@@ -27,10 +27,27 @@ source "amazon-ebs" "ubuntu" {
   ssh_username         = "ubuntu"
 }
 
+source "amazon-ebs" "ubuntu-gpu" {
+  ami_name      = "openai-whisper-packer-linux-aws-gpu-${local.timestamp}"
+  instance_type = "p3.2xlarge"
+  region        = "ap-northeast-1"
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["099720109477"]
+  }
+  ssh_username         = "ubuntu"
+}
+
 build {
   name    = "openai-whisper-packer"
   sources = [
-    "source.amazon-ebs.ubuntu"
+    "source.amazon-ebs.ubuntu",
+    "source.amazon-ebs.ubuntu-gpu"
   ]
   provisioner "ansible" {
     use_proxy               =  false

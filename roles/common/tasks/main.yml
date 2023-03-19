@@ -1,0 +1,4 @@
+- name: install python
+  import_tasks: install_python.yml
+- name: install whisper dependencies
+  import_tasks: install_whisper_dependencies.yml
