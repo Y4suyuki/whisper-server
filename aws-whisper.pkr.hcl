@@ -7,20 +7,24 @@ packer {
   }
 }
 
+locals {
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+}
+
 source "amazon-ebs" "ubuntu" {
-  ami_name      = "openai-whisper-packer-linux-aws"
+  ami_name      = "openai-whisper-packer-linux-aws-${local.timestamp}"
   instance_type = "t3.medium"
   region        = "ap-northeast-1"
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*"
+      name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
     most_recent = true
     owners      = ["099720109477"]
   }
-  ssh_username = "ubuntu"
+  ssh_username         = "ubuntu"
 }
 
 build {
@@ -28,4 +32,8 @@ build {
   sources = [
     "source.amazon-ebs.ubuntu"
   ]
+  provisioner "ansible" {
+    use_proxy               =  false
+    playbook_file           = "./playbook.yml"
+  }
 }
